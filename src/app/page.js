@@ -1,95 +1,164 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client';
 
-export default function Home() {
+import { useEffect, useState } from 'react';
+
+const basePath = process.env.NODE_ENV === 'production' ? '/kids-daily-routine' : '';
+
+const schedule = [
+  {
+    start: '06:45',
+    end: '07:20',
+    task: 'Eat Breakfast',
+    image: `${basePath}/images/breakfast.png`,
+    sound: `${basePath}/sounds/chime.mp3`
+  },
+  {
+    start: '07:20',
+    end: '07:30',
+    task: 'Put on Shoes',
+    image: `${basePath}/images/shoes.png`,
+    sound: `${basePath}/sounds/chime.mp3`
+  },
+  {
+    start: '18:00',
+    end: '18:30',
+    task: 'Eat Dinner',
+    image: `${basePath}/images/dinner.png`,
+    sound: `${basePath}/sounds/chime.mp3`
+  },
+  {
+    start: '18:30',
+    end: '18:50',
+    task: 'Bath Time',
+    image: `${basePath}/images/bath.png`,
+    sound: `${basePath}/sounds/chime.mp3`
+  },
+  {
+    start: '18:50',
+    end: '19:10',
+    task: 'Brush Teeth',
+    image: `${basePath}/images/teeth.png`,
+    sound: `${basePath}/sounds/chime.mp3`
+  },
+  {
+    start: '19:10',
+    end: '19:30',
+    task: 'Put on Pajamas',
+    image: `${basePath}/images/pajamas.png`,
+    sound: `${basePath}/sounds/chime.mp3`
+  },
+  {
+    start: '19:30',
+    end: '20:00',
+    task: 'Go to Bed',
+    image: `${basePath}/images/bed.png`,
+    sound: `${basePath}/sounds/chime.mp3`
+  }
+];
+
+const fallbackTask = {
+  task: 'Play Time',
+  image: `${basePath}/images/playtime.png`,
+  sound: null
+};
+
+export default function Page() {
+  const [currentTask, setCurrentTask] = useState(fallbackTask);
+  const [manualMode, setManualMode] = useState(false);
+  const [manualIndex, setManualIndex] = useState(0);
+
+  useEffect(() => {
+    if (manualMode) return; // skip updates if in manual mode
+
+    const checkTime = () => {
+      const now = new Date();
+      const time = now.toTimeString().slice(0, 5);
+      const task = schedule.find(({ start, end }) => time >= start && time < end) || fallbackTask;
+
+      if (task.task !== currentTask?.task) {
+        setCurrentTask(task);
+        if (task.sound) {
+          const audio = new Audio(task.sound);
+          audio.play().catch(() => {});
+        }
+      }
+    };
+
+    const interval = setInterval(checkTime, 10000);
+    checkTime();
+    return () => clearInterval(interval);
+  }, [currentTask, manualMode]);
+
+  const handleNext = () => {
+    const nextIndex = (manualIndex + 1) % schedule.length;
+    const task = schedule[nextIndex];
+    setCurrentTask(task);
+    setManualIndex(nextIndex);
+    setManualMode(true); // enable manual mode
+    if (task.sound) {
+      const audio = new Audio(task.sound);
+      audio.play().catch(() => {});
+    }
+  };
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.js</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <main
+      style={{
+        position: 'relative',
+        height: '100vh',
+        width: '100vw',
+        margin: 0,
+        padding: 0,
+        overflow: 'hidden'
+      }}
+    >
+      <img
+        src={currentTask.image}
+        alt={currentTask.task}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover'
+        }}
+      />
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      <h1
+        style={{
+          position: 'absolute',
+          bottom: '3rem',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          color: '#fff',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          padding: '1rem 2rem',
+          borderRadius: '1rem',
+          fontSize: '2.5rem',
+          textAlign: 'center'
+        }}
+      >
+        {currentTask.task}
+      </h1>
+
+      {/* 👇 Manual button — optional */}
+      {/* <button
+        onClick={handleNext}
+        style={{
+          position: 'absolute',
+          bottom: '1rem',
+          right: '1rem',
+          fontSize: '1rem',
+          padding: '0.5rem 1rem',
+          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+          border: 'none',
+          borderRadius: '8px',
+          cursor: 'pointer'
+        }}
+      >
+        ⏭ Next Task
+      </button> */}
+    </main>
   );
 }
