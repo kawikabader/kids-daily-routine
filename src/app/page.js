@@ -6,50 +6,50 @@ const basePath = process.env.NODE_ENV === 'production' ? '/kids-daily-routine' :
 
 const schedule = [
   {
-    start: '06:45',
-    end: '07:20',
+    start: '06:45', // 6:45 AM
+    end: '07:20', // 7:20 AM
     task: 'Eat Breakfast',
     image: `${basePath}/images/breakfast.png`,
     sound: `${basePath}/sounds/chime.mp3`
   },
   {
-    start: '07:20',
-    end: '07:30',
+    start: '07:20', // 7:20 AM
+    end: '07:30', // 7:30 AM
     task: 'Put on Shoes',
     image: `${basePath}/images/shoes.png`,
     sound: `${basePath}/sounds/chime.mp3`
   },
   {
-    start: '18:00',
-    end: '18:30',
-    task: 'Eat Dinner',
-    image: `${basePath}/images/dinner.png`,
-    sound: `${basePath}/sounds/chime.mp3`
-  },
-  {
-    start: '18:30',
-    end: '18:50',
+    start: '16:45', // 4:45 PM
+    end: '17:00', // 5:00 PM
     task: 'Bath Time',
     image: `${basePath}/images/bath.png`,
     sound: `${basePath}/sounds/chime.mp3`
   },
   {
-    start: '18:50',
-    end: '19:10',
-    task: 'Brush Teeth',
-    image: `${basePath}/images/teeth.png`,
+    start: '17:00', // 5:00 PM
+    end: '17:30', // 5:30 PM
+    task: 'Eat Dinner',
+    image: `${basePath}/images/dinner.png`,
     sound: `${basePath}/sounds/chime.mp3`
   },
   {
-    start: '19:10',
-    end: '19:30',
+    start: '17:30', // 5:30 PM
+    end: '18:00', // 6:00 PM
     task: 'Put on Pajamas',
     image: `${basePath}/images/pajamas.png`,
     sound: `${basePath}/sounds/chime.mp3`
   },
   {
-    start: '19:30',
-    end: '20:00',
+    start: '18:50', // 6:50 PM
+    end: '19:00', // 7:00 PM
+    task: 'Brush Teeth',
+    image: `${basePath}/images/teeth.png`,
+    sound: `${basePath}/sounds/chime.mp3`
+  },
+  {
+    start: '19:00', // 7:00 PM
+    end: '19:30', // 7:30 PM
     task: 'Go to Bed',
     image: `${basePath}/images/bed.png`,
     sound: `${basePath}/sounds/chime.mp3`
@@ -66,9 +66,42 @@ export default function Page() {
   const [currentTask, setCurrentTask] = useState(fallbackTask);
   const [manualMode, setManualMode] = useState(false);
   const [manualIndex, setManualIndex] = useState(0);
+  const [manualTimeoutId, setManualTimeoutId] = useState(null);
 
+  // ✅ Wake Lock to keep screen on
   useEffect(() => {
-    if (manualMode) return; // skip updates if in manual mode
+    let wakeLock = null;
+
+    const requestWakeLock = async () => {
+      try {
+        if ('wakeLock' in navigator) {
+          wakeLock = await navigator.wakeLock.request('screen');
+          console.log('Wake lock activated');
+        }
+      } catch (err) {
+        console.warn('Wake lock failed:', err);
+      }
+    };
+
+    requestWakeLock();
+
+    const handleVisibilityChange = () => {
+      if (wakeLock !== null && document.visibilityState === 'visible') {
+        requestWakeLock();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      if (wakeLock) wakeLock.release();
+    };
+  }, []);
+
+  // ✅ Time-based schedule updater
+  useEffect(() => {
+    if (manualMode) return;
 
     const checkTime = () => {
       const now = new Date();
@@ -89,16 +122,24 @@ export default function Page() {
     return () => clearInterval(interval);
   }, [currentTask, manualMode]);
 
-  const handleNext = () => {
+  // ✅ Manual cycle when clicking task label
+  const handleManualClick = () => {
     const nextIndex = (manualIndex + 1) % schedule.length;
     const task = schedule[nextIndex];
     setCurrentTask(task);
     setManualIndex(nextIndex);
-    setManualMode(true); // enable manual mode
+    setManualMode(true);
+
     if (task.sound) {
       const audio = new Audio(task.sound);
       audio.play().catch(() => {});
     }
+
+    if (manualTimeoutId) clearTimeout(manualTimeoutId);
+    const timeout = setTimeout(() => {
+      setManualMode(false);
+    }, 3000);
+    setManualTimeoutId(timeout);
   };
 
   return (
@@ -109,7 +150,8 @@ export default function Page() {
         width: '100vw',
         margin: 0,
         padding: 0,
-        overflow: 'hidden'
+        overflow: 'hidden',
+        backgroundColor: '#000'
       }}
     >
       <img
@@ -121,11 +163,13 @@ export default function Page() {
           left: 0,
           width: '100%',
           height: '100%',
-          objectFit: 'cover'
+          objectFit: 'contain',
+          backgroundColor: '#000'
         }}
       />
 
       <h1
+        onClick={handleManualClick}
         style={{
           position: 'absolute',
           bottom: '3rem',
@@ -136,29 +180,12 @@ export default function Page() {
           padding: '1rem 2rem',
           borderRadius: '1rem',
           fontSize: '2.5rem',
-          textAlign: 'center'
+          textAlign: 'center',
+          cursor: 'pointer'
         }}
       >
         {currentTask.task}
       </h1>
-
-      {/* 👇 Manual button — optional */}
-      {/* <button
-        onClick={handleNext}
-        style={{
-          position: 'absolute',
-          bottom: '1rem',
-          right: '1rem',
-          fontSize: '1rem',
-          padding: '0.5rem 1rem',
-          backgroundColor: 'rgba(255, 255, 255, 0.8)',
-          border: 'none',
-          borderRadius: '8px',
-          cursor: 'pointer'
-        }}
-      >
-        ⏭ Next Task
-      </button> */}
     </main>
   );
 }
