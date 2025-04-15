@@ -1,7 +1,3 @@
-Here you go — your updated README.md content in raw Markdown format, with only pnpm examples and GitHub Pages deploy instructions:
-
-⸻
-
 # Kids Daily Routine App
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [ `create-next-app` ](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
@@ -89,7 +85,3 @@ To learn more about Next.js, take a look at:
 	•	Learn Next.js
 
 You can also visit the Next.js GitHub repo to contribute or explore further.
-
----
-
-Let me know if you'd like this saved into a file or added as a commit to your project!
