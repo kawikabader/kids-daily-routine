@@ -1,6 +1,6 @@
 # Kids Daily Routine App
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [ `create-next-app` ](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+A [Next.js](https://nextjs.org) app to help toddlers follow a daily routine using images and sound cues.
 
 ## Getting Started
 
@@ -48,7 +48,7 @@ export default nextConfig;
 ```json
 "scripts": {
   "dev": "next dev", 
-  "build": "next build && next export", 
+  "build": "next build", 
   "deploy": "gh-pages -d out"
 }
 ```
@@ -67,9 +67,8 @@ pnpm deploy
 ```
 
 Enable GitHub Pages in your repo:
-
-	•	Go to Settings > Pages
-	•	Set the source to the gh-pages branch, root directory
+* Go to Settings > Pages
+* Set the source to the gh-pages branch, root directory
 
 Your app will be live at:
 
