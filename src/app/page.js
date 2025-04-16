@@ -28,14 +28,14 @@ const schedule = [
   },
   {
     start: '17:00', // 5:00 PM
-    end: '17:30', // 5:30 PM
+    end: '18:00', // 6:00 PM
     task: 'Eat Dinner',
     image: `${basePath}/images/dinner.png`,
     sound: `${basePath}/sounds/chime.mp3`
   },
   {
-    start: '17:30', // 5:30 PM
-    end: '18:00', // 6:00 PM
+    start: '18:00', // 6:00 PM
+    end: '18:15', // 6:15 PM
     task: 'Put on Pajamas',
     image: `${basePath}/images/pajamas.png`,
     sound: `${basePath}/sounds/chime.mp3`
