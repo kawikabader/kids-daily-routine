@@ -6,14 +6,14 @@ const basePath = process.env.NODE_ENV === 'production' ? '/kids-daily-routine' :
 
 const schedule = [
   {
-    start: '06:45', // 6:45 AM
-    end: '07:20', // 7:20 AM
+    start: '06:30', // 6:45 AM
+    end: '07:25', // 7:20 AM
     task: 'Eat Breakfast',
     image: `${basePath}/images/breakfast.png`,
     sound: `${basePath}/sounds/chime.mp3`
   },
   {
-    start: '07:20', // 7:20 AM
+    start: '07:25', // 7:20 AM
     end: '07:30', // 7:30 AM
     task: 'Put on Shoes',
     image: `${basePath}/images/shoes.png`,
@@ -49,7 +49,7 @@ const schedule = [
   },
   {
     start: '19:00', // 7:00 PM
-    end: '19:30', // 7:30 PM
+    end: '20:00', // 8:00 PM
     task: 'Go to Bed',
     image: `${basePath}/images/bed.png`,
     sound: `${basePath}/sounds/chime.mp3`
