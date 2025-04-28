@@ -2,6 +2,8 @@
 
 A [Next.js](https://nextjs.org) app to help toddlers follow a daily routine using images and sound cues.
 
+https://kawikabader.github.io/kids-daily-routine/
+
 ## Getting Started
 
 First, run the development server:
@@ -69,18 +71,3 @@ pnpm deploy
 Enable GitHub Pages in your repo:
 * Go to Settings > Pages
 * Set the source to the gh-pages branch, root directory
-
-Your app will be live at:
-
-https://your-username.github.io/kids-daily-routine/
-
-⸻
-
-Learn More
-
-To learn more about Next.js, take a look at:
-
-	•	Next.js Documentation
-	•	Learn Next.js
-
-You can also visit the Next.js GitHub repo to contribute or explore further.
